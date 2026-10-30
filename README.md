@@ -7,7 +7,7 @@ Flathub packaging repository for **Bazecor** by Dygma.
 Build this Flatpak bundle locally:
 
 ```bash
-./build_and_install.sh
+./local-test-build.sh
 ```
 
 ## Install From Flathub
@@ -46,12 +46,10 @@ We have included an simple to use `update.sh` that will take care of automatical
 
 ```bash
 Usage:
-  ./update.sh [--version <latest|VERSION-TAG>]
+  ./update.sh [--commit <SHA>]
 
 Examples:
-  ./update.sh
-  ./update.sh --version latest
-  ./update.sh --version v1.9.0
+  ./update.sh --commit 4f9c894be6f4bb95f7172c20ec8be1ec6aa0b446 
 ```
 
 If no `--version` parameter is provided, it will assume `latest`.

@@ -14,6 +14,7 @@ finish-args:
   - --env=XCURSOR_PATH=/run/host/user-share/icons:/run/host/share/icons
   - --filesystem=/run/udev:ro
   - --filesystem=host-etc:ro # This flag requires explicit permission to be granted by flathub.
+  - --filesystem=~/Dygma:create"
   - --share=ipc
   - --share=network
   - --socket=fallback-x11
@@ -67,40 +68,24 @@ modules:
     sources:
       - type: git
         url: "https://github.com/Dygmalab/Bazecor"
-        tag: v1.10.0 # DO NOT MANUALLY CHANGE! Use ./update.sh instead
-        commit: "b2a9248f289ebc4002a6e350592c4ba0abf25fa1" # DO NOT MANUALLY CHANGE! Use ./update.sh instead
+        commit: "7b37713f16f6e6536fe9ee4da77d9fdfca2ad862" # DO NOT MANUALLY CHANGE! Use ./update.sh instead
       - type: patch
         # This patch fixes electron-forge trying to download electron and trying to install npm packages
         # outside of our temporary yarn mirror for flatpak-builder. This change should never go upstream.
         path: forge.config.ts.patch
-      - type: patch
-        # This is TEMPORARY until https://github.com/Dygmalab/Bazecor/pull/1123 is merged upstream and released.
-        # This patch removes the dialog prompting the user to install the udev file. We are disabling it until
-        # the proper user experience solution has been implemented, merged and released upstream.
-        path: onReadyToShow.ts.patch
-        # This is TEMPORARY until https://github.com/Dygmalab/Bazecor/pull/1123 is merged upstream and released.
-      - type: file
-        url: https://raw.githubusercontent.com/mean-ui-thread/Bazecor/c6429d5dcbc8cb3fec5e45dc7c8e41b32aacbbbe/build/com.dygma.bazecor.metainfo.xml
-        sha256: ab447877de5616c07a7828f5efb8eedef2f8d1e8ffead91ecff65326b3a2399b
-        dest-filename: com.dygma.bazecor.metainfo.xml
-        # This is TEMPORARY until https://github.com/Dygmalab/Bazecor/pull/1123 is merged upstream and released.
-      - type: file
-        url: https://raw.githubusercontent.com/mean-ui-thread/Bazecor/c6429d5dcbc8cb3fec5e45dc7c8e41b32aacbbbe/build/com.dygma.bazecor.desktop
-        sha256: 691ecaa50f666071a12d1da3d7cdf6cdf9c0bf46aec0632266e962ea087df4a2
-        dest-filename: com.dygma.bazecor.desktop
       - type: script
-        dest-filename: Bazecor
-        commands: 
+        dest-filename: electron-wrapper
+        commands:
           - exec zypak-wrapper /app/lib/com.dygma.bazecor/Bazecor "$@"
-        # The documentation for building an electron app for flatpak gives us the instructions on how to
-        # create an offline npm repository (also known as an offline-mirror). It is generally done by
-        # setting a new environment variable `npm_config_offline` to `"true"`, and by instructing `npm` to
-        # work in offline mode using the `--offline`.
-        # https://docs.flatpak.org/en/latest/electron.html#the-application-module
-        # https://docs.flatpak.org/en/latest/electron.html#build-commands
-        # Unfortunately, Bazecor uses yarn and not npm: the instructions from flatpak.org won't work.
-        # I have followed these instructions here to create the equivalent offline mirror for yarn:
-        # https://www.w3resource.com/yarn/configuring-an-offline-mirror.php
+          # The documentation for building an electron app for flatpak gives us the instructions on how to
+          # create an offline npm repository (also known as an offline-mirror). It is generally done by
+          # setting a new environment variable `npm_config_offline` to `"true"`, and by instructing `npm` to
+          # work in offline mode using the `--offline`.
+          # https://docs.flatpak.org/en/latest/electron.html#the-application-module
+          # https://docs.flatpak.org/en/latest/electron.html#build-commands
+          # Unfortunately, Bazecor uses yarn and not npm: the instructions from flatpak.org won't work.
+          # I have followed these instructions here to create the equivalent offline mirror for yarn:
+          # https://www.w3resource.com/yarn/configuring-an-offline-mirror.php
       - type: file
         path: .yarnrc
         # This file is used for bundling NPM packages, described here:
@@ -124,9 +109,7 @@ modules:
           aarch64) BAZECOR_ARCH=arm64 ;;
         esac
         cp -r out/Bazecor-linux-${BAZECOR_ARCH}/* ${FLATPAK_DEST}/lib/com.dygma.bazecor/
-      - install -Dm755 Bazecor "${FLATPAK_DEST}/bin/Bazecor"
-      #- install -Dm644 build/com.dygma.bazecor.desktop "${FLATPAK_DEST}/share/applications/com.dygma.bazecor.desktop"
-      #- install -Dm644 build/com.dygma.bazecor.metainfo.xml "${FLATPAK_DEST}/share/metainfo/com.dygma.bazecor.metainfo.xml"
-      - install -Dm644 com.dygma.bazecor.desktop "${FLATPAK_DEST}/share/applications/com.dygma.bazecor.desktop"
-      - install -Dm644 com.dygma.bazecor.metainfo.xml "${FLATPAK_DEST}/share/metainfo/com.dygma.bazecor.metainfo.xml"
+      - install -Dm755 electron-wrapper "${FLATPAK_DEST}/bin/Bazecor"
+      - install -Dm644 build/com.dygma.bazecor.desktop "${FLATPAK_DEST}/share/applications/com.dygma.bazecor.desktop"
+      - install -Dm644 build/com.dygma.bazecor.metainfo.xml "${FLATPAK_DEST}/share/metainfo/com.dygma.bazecor.metainfo.xml"
       - install -Dm644 build/logo.png "${FLATPAK_DEST}/share/icons/hicolor/512x512/apps/com.dygma.bazecor.png"
