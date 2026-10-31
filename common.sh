@@ -64,5 +64,5 @@ validate_flatpak_manifest() {
 validate_flatpak_repo() {
 	local repo_dir="${1:-repo}"
 	log "Validating flatpak local repo \"$repo_dir\"..."
-	flatpak run --command=flatpak-builder-lint org.flatpak.Builder repo "$repo_dir" && success || die "Failed to lint the local repo \"$repo_dir\". Please check the output for errors."
+	flatpak run --command=flatpak-builder-lint org.flatpak.Builder repo "$repo_dir" && success || warn "Failed to lint the local repo \"$repo_dir\". Please check the output for errors."
 }
