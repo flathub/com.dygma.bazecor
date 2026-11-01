@@ -6,7 +6,7 @@ runtime: org.freedesktop.Platform
 sdk: org.freedesktop.Sdk
 sdk-extensions:
   - org.freedesktop.Sdk.Extension.node24
-command: Bazecor
+command: electron-wrapper
 separate-locales: false
 finish-args:
   - --device=all
