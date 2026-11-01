@@ -6,7 +6,7 @@ runtime: org.freedesktop.Platform
 sdk: org.freedesktop.Sdk
 sdk-extensions:
   - org.freedesktop.Sdk.Extension.node24
-command: Bazecor
+command: electron-wrapper
 separate-locales: false
 finish-args:
   - --device=all
@@ -109,7 +109,7 @@ modules:
           aarch64) BAZECOR_ARCH=arm64 ;;
         esac
         cp -r out/Bazecor-linux-${BAZECOR_ARCH}/* ${FLATPAK_DEST}/lib/com.dygma.bazecor/
-      - install -Dm755 electron-wrapper "${FLATPAK_DEST}/bin/Bazecor"
+      - install -Dm755 electron-wrapper "${FLATPAK_DEST}/bin/electron-wrapper"
       - install -Dm644 build/com.dygma.bazecor.desktop "${FLATPAK_DEST}/share/applications/com.dygma.bazecor.desktop"
       - install -Dm644 build/com.dygma.bazecor.metainfo.xml "${FLATPAK_DEST}/share/metainfo/com.dygma.bazecor.metainfo.xml"
       - install -Dm644 build/logo.png "${FLATPAK_DEST}/share/icons/hicolor/512x512/apps/com.dygma.bazecor.png"
